@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+             xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI"
+             xmlns:omgdc="http://www.omg.org/spec/DD/20100524/DC"
+             xmlns:omgdi="http://www.omg.org/spec/DD/20100524/DI"
+             xmlns:flowable="http://flowable.org/bpmn"
+             typeLanguage="http://www.w3.org/2001/XMLSchema"
+             expressionLanguage="http://www.w3.org/1999/XPath"
+             targetNamespace="http://www.flowable.org/processdef">
+
+    <process id="holidayRequest" name="Holiday Request" isExecutable="true">
+
+        <startEvent id="startEvent"/>
+        <!--线条指向-->
+        <sequenceFlow sourceRef="startEvent" targetRef="approveTask"/>
+
+        <userTask id="approveTask" name="Approve or reject request"/>
+        <!--线条指向-->
+        <sequenceFlow sourceRef="approveTask" targetRef="decision"/>
+
+        <!--网关-->
+        <exclusiveGateway id="decision"/>
+        <!--线条指向，下面有两个分支-->
+        <!--线条指向approved-->
+        <sequenceFlow sourceRef="decision" targetRef="externalSystemCall">
+            <conditionExpression xsi:type="tFormalExpression">
+                <![CDATA[
+          ${approved}
+        ]]>
+            </conditionExpression>
+        </sequenceFlow>
+        <!--线条指向!approved-->
+        <sequenceFlow sourceRef="decision" targetRef="sendRejectionMail">
+            <conditionExpression xsi:type="tFormalExpression">
+                <![CDATA[
+          ${!approved}
+        ]]>
+            </conditionExpression>
+        </sequenceFlow>
+
+        <!--分支1-->
+        <serviceTask id="externalSystemCall" name="Enter holidays in external system"
+                     flowable:class="org.flowable.CallExternalSystemDelegate"/>
+        <!--线条指向-->
+        <sequenceFlow sourceRef="externalSystemCall" targetRef="holidayApprovedTask"/>
+        <!--用户任务-->
+        <userTask id="holidayApprovedTask" name="Holiday approved"/>
+        <!--线条指向-->
+        <sequenceFlow sourceRef="holidayApprovedTask" targetRef="approveEnd"/>
+
+        <!--服务任务-->
+        <serviceTask id="sendRejectionMail" name="Send out rejection email"
+                     flowable:class="org.flowable.SendRejectionMail"/>
+        <!--线条指向-->
+        <sequenceFlow sourceRef="sendRejectionMail" targetRef="rejectEnd"/>
+
+        <!--分支2结束-->
+        <endEvent id="approveEnd"/>
+
+        <!--分支2结束-->
+        <endEvent id="rejectEnd"/>
+
+    </process>
+
+</definitions>
