@@ -16,7 +16,7 @@
         <!--线条指向-->
         <sequenceFlow sourceRef="startEvent" targetRef="approveTask"/>
 
-        <userTask id="approveTask" name="Approve or reject request"/>
+        <userTask id="approveTask" name="Approve or reject request"  flowable:candidateGroups="managers"/>
         <!--线条指向-->
         <sequenceFlow sourceRef="approveTask" targetRef="decision"/>
 
@@ -46,7 +46,7 @@
         <!--线条指向-->
         <sequenceFlow sourceRef="externalSystemCall" targetRef="holidayApprovedTask"/>
         <!--用户任务-->
-        <userTask id="holidayApprovedTask" name="Holiday approved"/>
+        <userTask id="holidayApprovedTask" name="Holiday approved" flowable:assignee="${employee}" />
         <!--线条指向-->
         <sequenceFlow sourceRef="holidayApprovedTask" targetRef="approveEnd"/>
 
@@ -61,7 +61,6 @@
 
         <!--分支2结束-->
         <endEvent id="rejectEnd"/>
-
     </process>
 
 </definitions>
