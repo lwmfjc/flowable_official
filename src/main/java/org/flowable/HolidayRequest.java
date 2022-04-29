@@ -51,7 +51,7 @@ public class HolidayRequest {
         System.out.println("Found process definition : " + processDefinition.getName());
 
         Scanner scanner= new Scanner(System.in);
-       /* System.out.println("启动流程-----------");
+        System.out.println("启动流程-----------");
 
         System.out.println("Who are you?");
         String employee = scanner.nextLine();
@@ -62,16 +62,16 @@ public class HolidayRequest {
         System.out.println("Why do you need them?");
         String description = scanner.nextLine();
         System.out.printf("输入结果:%s--%d---%s",
-                employee,nrOfHolidays,description);*/
+                employee,nrOfHolidays,description);
 
         RuntimeService runtimeService = processEngine.getRuntimeService();
 
-        /*Map<String, Object> variables = new HashMap<String, Object>();
+        Map<String, Object> variables = new HashMap<String, Object>();
         variables.put("employee", employee);
         variables.put("nrOfHolidays", nrOfHolidays);
-        variables.put("description", description);*/
-        /*ProcessInstance processInstance =
-                runtimeService.startProcessInstanceByKey("holidayRequest", variables);*/
+        variables.put("description", description);
+        ProcessInstance processInstance =
+                runtimeService.startProcessInstanceByKey("holidayRequest", variables);
 
         //获取经理的任务
         TaskService taskService = processEngine.getTaskService();
@@ -81,7 +81,7 @@ public class HolidayRequest {
             System.out.println((i+1) + ") " + tasks.get(i).getName());
         }
         //选择任务并开始
-        /*System.out.println("Which task would you like to complete?");
+        System.out.println("Which task would you like to complete?");
         int taskIndex = Integer.valueOf(scanner.nextLine());
         Task task = tasks.get(taskIndex - 1);
         Map<String, Object> processVariables = taskService.getVariables(task.getId());
@@ -92,12 +92,12 @@ public class HolidayRequest {
         boolean approved = scanner.nextLine().toLowerCase().equals("y");
         variables1 = new HashMap<String, Object>();
         variables1.put("approved", approved);
-        taskService.complete(task.getId(), variables1);*/
+        taskService.complete(task.getId(), variables1);
         //显示
         HistoryService historyService = processEngine.getHistoryService();
         List<HistoricActivityInstance> activities =
                 historyService.createHistoricActivityInstanceQuery()
-                        .processInstanceId("17504")
+                        .processInstanceId(processInstance.getId())
                         .finished()
                         .orderByHistoricActivityInstanceEndTime().asc()
                         .list();
